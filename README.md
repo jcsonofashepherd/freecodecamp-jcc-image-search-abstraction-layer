@@ -1,5 +1,5 @@
 # Backend Challenges boilerplate - package.json
 
-Full stack JavaScript app for shortening urls.
+Full stack JavaScript app for redirecting/shortening urls.
 
 # by John C.
