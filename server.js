@@ -38,58 +38,10 @@ app.route('/')
 		  res.sendFile(process.cwd() + '/views/index.html');
     });
 
-app.get('/cat', function (request, response) {
-  response.json(urlCatalogue);
-  response.end();
-});
-
-app.get(/(new\/https?:\/\/([A-Za-z0-9]+\.)+[A-Za-z][A-Za-z]+\.?(\:[A-Za-z0-9]+)?\/?(\/[^ ]+)?)$/, function (request, response) {
-  var shortUrl = getRandomInt(1000, 10000),
-      repeatCheck = urlCatalogue.find(function (object) {
-        return object.short_url == "https://jcasabar-url-shortener.glitch.me/" + shortUrl;
-      }),
-      url = {
-        original_url: request.url.substring(5),
-        short_url: "https://jcasabar-url-shortener.glitch.me/" + shortUrl
-      };
-  if (!!repeatCheck) {
-    urlCatalogue = urlCatalogue.filter(function (object) {
-      return object.short_url !== "https://jcasabar-url-shortener.glitch.me/" + shortUrl;
-    });
-  }
-  urlCatalogue.push(url);
-  response.writeHead(200, { 'Content-Type': 'application/json' });
-  response.end(JSON.stringify(url));
-});
-
-app.get(/\d{4}/, function (request, response) {
-  var shortUrl = request.url.substring(1),
-      webObj = urlCatalogue.find(function (object) {
-        return object.short_url == "https://jcasabar-url-shortener.glitch.me/" + shortUrl;
-      });
-  if (!webObj) {
-    response.status(404);
-    response.type('txt').send('Shortened url is referring to an absent link, please try again');
-  } else {
-    response.writeHead(301, {
-      location: webObj.original_url
-    });
-    response.end();
-  }
-});
-
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-var urlCatalogue = [];
-
 // Respond not found to all the wrong routes
 app.use(function(req, res, next){
   res.status(404);
-  res.type('txt').send('Url in the wrong format, make sure to have a valid protocol/website.');
+  res.type('txt').send('error in image query');
 });
 
 // Error Middleware

@@ -20,12 +20,13 @@ body {
 ol {
 	list-style-position: inside;
 }
+
 ul {
 	list-style-type: none;
 }
 
 a {
-	color: #2574A9;
+	text-decoration: none;
 }
 
 code {
