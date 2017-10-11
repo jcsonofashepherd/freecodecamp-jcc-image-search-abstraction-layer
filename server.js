@@ -38,7 +38,11 @@ app.route('/')
 		  res.sendFile(process.cwd() + '/views/index.html');
     });
 
-app.get(/(new\/https?:\/\/([A-Za-z0-9]+\.)+[A-Za-z][A-Za-z]+\.?\/?(\/[^ ]+)?)$/, function (request, response) {
+app.get('/cat', function (request, response) {
+  
+});
+
+app.get(/(new\/https?:\/\/([A-Za-z0-9]+\.)+[A-Za-z][A-Za-z]+\.?(\:[A-Za-z0-9]+)?\/?(\/[^ ]+)?)$/, function (request, response) {
   var shortUrl = getRandomInt(1000, 10000),
       repeatCheck = urlCatalogue.find(function (object) {
         return object.short_url == "https://jcasabar-url-shortener.glitch.me/" + shortUrl;
