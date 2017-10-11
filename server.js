@@ -39,7 +39,8 @@ app.route('/')
     });
 
 app.get('/cat', function (request, response) {
-  
+  response.json(urlCatalogue);
+  response.end();
 });
 
 app.get(/(new\/https?:\/\/([A-Za-z0-9]+\.)+[A-Za-z][A-Za-z]+\.?(\:[A-Za-z0-9]+)?\/?(\/[^ ]+)?)$/, function (request, response) {
