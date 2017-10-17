@@ -7,7 +7,9 @@
 
 var fs = require('fs');
 var express = require('express');
+var mongo = require('mongodb').MongoClient;
 var app = express();
+var mongoUrl = "mongodb://" + process.env.DBUSER + ":" + process.env.DBPASS + "@ds119345.mlab.com:19345/freecodecamp_backend_projects";
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 if (!process.env.DISABLE_XORIGIN) {
@@ -40,8 +42,17 @@ app.route('/')
     });
 
 app.get("/latest", function(request, response) {
-    response.writeHead(200, {'Content-Type': 'application/json'});
-    response.end(JSON.stringify(queryCatalogue));
+  mongo.connect(mongoUrl, function(err, db) {
+    if (err) throw err;
+    var queryCatalogue = db.collection('queryCatalogue');
+    queryCatalogue.find()
+                  .project({_id:0})
+                  .toArray(function(err, docs) {
+                    if (err) throw err;
+                    response.send(docs.slice(docs.length - 10).reverse());
+                    db.close();
+                  });
+  });
 })
 
 app.get("/imagesearch/:query", function(request, response) {
@@ -59,10 +70,18 @@ app.get("/imagesearch/:query", function(request, response) {
   var url = "https://www.googleapis.com/customsearch/v1?q=" + request.params.query +"&cx=" + process.env.CSE_ID + "&key=" + process.env.API_KEY +
              "&searchType=image&start=" + page;
   if (page !== undefined) {
-    queryCatalogue.push({
+    var query = {
       term: request.params.query,
       page: page,
       when: time.toString()
+    };
+    mongo.connect(mongoUrl, function(err, db) {
+      if (err) throw err;
+      var queryCatalogue = db.collection('queryCatalogue');
+      queryCatalogue.insert(query, function(err, data) {
+        if (err) throw err;
+        db.close();
+      });
     });
     xhr.open("GET", url);
     xhr.send();
@@ -81,8 +100,6 @@ app.get("/imagesearch/:query", function(request, response) {
     };
   };
 });
-
-var queryCatalogue = []; 
 
 // Respond not found to all the wrong routes
 app.use(function(req, res, next) {
